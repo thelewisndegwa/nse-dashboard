@@ -1,0 +1,9 @@
+node_modules
+.next
+out
+*.log
+*.tsbuildinfo
+.env*
+.vercel
+nse-scaffold-tmp
+Kenya Nairobi Securities Exchange (NSE) All Stocks
