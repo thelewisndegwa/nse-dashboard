@@ -25,12 +25,16 @@ function parseAmount(value: string): number {
   return Number(value.replace(/,/g, "").trim());
 }
 
-function yearsAgoIso(years: number, now = new Date()): string {
-  const then = new Date(now.getFullYear() - years, now.getMonth(), now.getDate());
+function monthsAgoIso(months: number, now = new Date()): string {
+  const then = new Date(now.getFullYear(), now.getMonth() - months, now.getDate());
   const y = then.getFullYear();
   const m = String(then.getMonth() + 1).padStart(2, "0");
   const d = String(then.getDate()).padStart(2, "0");
   return `${y}-${m}-${d}`;
+}
+
+function yearsAgoIso(years: number, now = new Date()): string {
+  return monthsAgoIso(years * 12, now);
 }
 
 function defaultBuyDate(historyEnd: string): string {
@@ -98,20 +102,18 @@ export function WhatIfView({ stocks, historyEnd, quoteVersion }: Props) {
 
   const datePresets = stock
     ? [
-        { label: "1 year", years: 1 },
-        { label: "3 years", years: 3 },
-        { label: "5 years", years: 5 },
-        { label: "10 years", years: 10 },
+        { label: "6 months", months: 6 },
+        { label: "1 year", months: 12 },
+        { label: "3 years", months: 36 },
+        { label: "5 years", months: 60 },
+        { label: "10 years", months: 120 },
       ]
-        .map((preset) => ({ label: preset.label, date: yearsAgoIso(preset.years) }))
+        .map((preset) => ({ label: preset.label, date: monthsAgoIso(preset.months) }))
         .filter((preset) => preset.date >= stock.first && preset.date <= stock.last)
     : [];
 
   const chartPoints = result?.points.map((point) => ({ d: point.d, p: point.v })) ?? [];
-  const actions = result?.steps
-    .filter((step) => !step.dividend)
-    .map((step) => `${step.label} on ${niceDate(step.date)}`)
-    .join("; ");
+  const actions = result?.steps.map((step) => `${step.label} on ${niceDate(step.date)}`).join("; ");
 
   return (
     <div className="whatif">
@@ -192,12 +194,6 @@ export function WhatIfView({ stocks, historyEnd, quoteVersion }: Props) {
                 {pct(result.returnPct)}
                 <i>return</i>
               </span>
-              {result.dividendCount > 0 ? (
-                <span>
-                  {comma(result.dividends)}
-                  <i>{result.dividendCount === 1 ? "dividend" : "dividends"}</i>
-                </span>
-              ) : null}
             </p>
             <PriceChart points={chartPoints} liveAttached={result.liveAttached} />
             {result.benchmark && (
@@ -211,12 +207,9 @@ export function WhatIfView({ stocks, historyEnd, quoteVersion }: Props) {
                 {warning}
               </p>
             ))}
-            <p className="quiet">
-              {result.dividendCount > 0
-                ? `Includes ${kesExact(result.dividends)} from ${result.dividendCount} dividend${result.dividendCount === 1 ? "" : "s"}.`
-                : "No cash dividends in this period."}
-              {result.tickerThen !== result.liveCode ? ` It traded as ${result.tickerThen}; live ticker is ${result.liveCode}.` : ""}
-            </p>
+            {result.tickerThen !== result.liveCode ? (
+              <p className="quiet">It traded as {result.tickerThen}; live ticker is {result.liveCode}.</p>
+            ) : null}
           </>
         )}
       </section>

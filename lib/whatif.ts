@@ -1,4 +1,3 @@
-import { dividendsFor, formatDps, type Dividend } from "./dividends";
 import { isoToYmd, sessionOnOrAfter, ymdToIso, ymdToTime, type Market, type Series } from "./history";
 import { sortListedStocks } from "./stocks";
 
@@ -21,7 +20,6 @@ export type WhatIfStep = {
   ratio: number;
   sharesBefore: number;
   sharesAfter: number;
-  dividend?: number;
 };
 
 export type WhatIfResult = {
@@ -36,9 +34,6 @@ export type WhatIfResult = {
   sharesBought: number;
   sharesNow: number;
   cash: number;
-  dividends: number;
-  dividendCount: number;
-  dividendFrom: string | null;
   cost: number;
   nowPrice: number;
   nowAsOf: string;
@@ -122,24 +117,6 @@ function jumpWarning(jump: Series["jumps"][number]): string {
     : `The price ${moved} between ${when}, with no share consolidation on record. If shares were consolidated, the real value today is lower than shown.`;
 }
 
-type Event =
-  | { date: number; kind: "shares"; ratio: number; label: string }
-  | { date: number; kind: "cash"; dps: number; label: string };
-
-function eventsAfter(series: Series, tradeYmd: number, nowYmd: number, ledger: Dividend[]): Event[] {
-  const events: Event[] = [];
-  for (const action of series.actions) {
-    if (action.date > tradeYmd) events.push({ date: action.date, kind: "shares", ratio: action.ratio, label: action.label });
-  }
-  for (const row of ledger) {
-    if (row.date > tradeYmd && row.date <= nowYmd) {
-      events.push({ date: row.date, kind: "cash", dps: row.dps, label: `KES ${formatDps(row.dps)} dividend` });
-    }
-  }
-  events.sort((a, b) => a.date - b.date || (a.kind === "shares" ? -1 : 1));
-  return events;
-}
-
 export function whatIf(input: {
   market: Market;
   code: string;
@@ -147,7 +124,6 @@ export function whatIf(input: {
   shares?: number;
   amount?: number;
   live?: Map<string, LivePrice> | null;
-  dividends?: Map<string, Dividend[]>;
 }): WhatIfResult | { error: string } {
   const series = input.market.byCode.get(input.code.trim().toUpperCase());
   if (!series || series.index) return { error: "Pick a stock from the list." };
@@ -186,49 +162,30 @@ export function whatIf(input: {
   const live = liveFor(series, input.live);
   const nowPrice = live ? live.price : series.closes[series.closes.length - 1];
   const nowYmd = live ? live.ymd : last;
-  const ledger = dividendsFor(series, input.dividends);
-  const events = eventsAfter(series, tradeYmd, nowYmd, ledger);
+  const later = series.actions.filter((action) => action.date > tradeYmd);
   const steps: WhatIfStep[] = [];
   let shares = sharesBought;
-  let dividendCash = 0;
-  let dividendCount = 0;
-  for (const event of events) {
-    if (event.kind === "shares") {
-      const before = shares;
-      shares = whole ? Math.floor(shares * event.ratio + 1e-9) : shares * event.ratio;
-      steps.push({ date: ymdToIso(event.date), label: event.label, ratio: event.ratio, sharesBefore: before, sharesAfter: shares });
-    } else {
-      const paid = round2(shares * event.dps);
-      dividendCash = round2(dividendCash + paid);
-      dividendCount++;
-      steps.push({
-        date: ymdToIso(event.date),
-        label: event.label,
-        ratio: 1,
-        sharesBefore: shares,
-        sharesAfter: shares,
-        dividend: paid,
-      });
-    }
+  for (const action of later) {
+    const before = shares;
+    shares = whole ? Math.floor(shares * action.ratio + 1e-9) : shares * action.ratio;
+    steps.push({ date: ymdToIso(action.date), label: action.label, ratio: action.ratio, sharesBefore: before, sharesAfter: shares });
   }
 
   const leftover = cash;
-  const value = shares * nowPrice + leftover + dividendCash;
+  const value = shares * nowPrice + leftover;
   const profit = value - cost;
   const years = Math.max(0, (ymdToTime(nowYmd) - ymdToTime(tradeYmd)) / YEAR_MS);
   const cagr = years >= 1 && value > 0 ? (Math.pow(value / cost, 1 / years) - 1) * 100 : null;
 
   const points: WhatIfResult["points"] = [];
   let held = sharesBought;
-  let pocket = leftover;
   let next = 0;
   for (let i = idx; i < series.dates.length; i++) {
-    while (next < events.length && events[next].date <= series.dates[i]) {
-      const event = events[next++];
-      if (event.kind === "shares") held = whole ? Math.floor(held * event.ratio + 1e-9) : held * event.ratio;
-      else pocket = round2(pocket + held * event.dps);
+    while (next < later.length && later[next].date <= series.dates[i]) {
+      held = whole ? Math.floor(held * later[next].ratio + 1e-9) : held * later[next].ratio;
+      next++;
     }
-    points.push({ d: ymdToIso(series.dates[i]), v: round2(held * series.closes[i] + pocket) });
+    points.push({ d: ymdToIso(series.dates[i]), v: round2(held * series.closes[i] + leftover) });
   }
   let liveAttached = false;
   if (live && nowYmd > last) {
@@ -265,9 +222,6 @@ export function whatIf(input: {
     sharesBought,
     sharesNow: shares,
     cash: leftover,
-    dividends: dividendCash,
-    dividendCount,
-    dividendFrom: ledger[0] ? ymdToIso(ledger[0].date) : null,
     cost,
     nowPrice,
     nowAsOf: ymdToIso(nowYmd),

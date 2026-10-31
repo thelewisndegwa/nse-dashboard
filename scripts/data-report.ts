@@ -6,7 +6,6 @@
  */
 import fs from "fs";
 import path from "path";
-import { getDividends } from "../lib/dividends";
 import { DATA_DIR, getMarket, ymdToIso, type Series } from "../lib/history";
 
 const market = getMarket();
@@ -84,19 +83,6 @@ for (const series of stocks) {
 }
 lines.push("");
 
-const dividends = getDividends();
-let dividendCount = 0;
-for (const rows of dividends.values()) dividendCount += rows.length;
-lines.push("## Dividends from TradingView", "");
-lines.push("Cash dividends (ex-date and gross DPS) from TradingView quote history. Applied as cash in the what-if; not reverse-engineered from the price files.", "");
-lines.push("| Ticker | Count | First | Last |", "| --- | --- | --- | --- |");
-for (const series of stocks) {
-  const rows = dividends.get(series.code) ?? [];
-  if (!rows.length) continue;
-  lines.push(`| ${series.code}${status(series)} | ${rows.length} | ${ymdToIso(rows[0].date)} | ${ymdToIso(rows[rows.length - 1].date)} |`);
-}
-lines.push("");
-
 const out = path.join(DATA_DIR, "quality-report.md");
 fs.writeFileSync(out, lines.join("\n"));
 
@@ -104,5 +90,5 @@ const actionCount = stocks.reduce((sum, series) => sum + series.actions.length, 
 const jumpCount = stocks.reduce((sum, series) => sum + series.jumps.length, 0);
 console.log(`${ymdToIso(market.start)} to ${ymdToIso(market.end)}: ${sessions} sessions, ${market.list.length} tickers`);
 console.log(`dropped ${JSON.stringify(dropped)}, skipped ${JSON.stringify(market.skipped)}`);
-console.log(`${actionCount} splits/bonuses applied, ${jumpCount} unexplained jumps, ${dividendCount} dividends`);
+console.log(`${actionCount} splits/bonuses applied, ${jumpCount} unexplained jumps`);
 console.log(`wrote ${path.relative(process.cwd(), out)}`);

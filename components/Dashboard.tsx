@@ -58,7 +58,7 @@ export function Dashboard() {
         <WhatIfView stocks={catalog.stocks} historyEnd={catalog.historyEnd} quoteVersion={quoteVersion} />
       )}
 
-      <footer className="footer">Dividends sit as cash, not reinvested. Not investment advice.</footer>
+      <footer className="footer">Not investment advice.</footer>
     </main>
   );
 }

@@ -1,5 +1,4 @@
 import { NextRequest, NextResponse } from "next/server";
-import { getDividends } from "@/lib/dividends";
 import { getMarket } from "@/lib/history";
 import { getLiveBoard } from "@/lib/live";
 import { whatIf, type LivePrice } from "@/lib/whatif";
@@ -35,7 +34,6 @@ export async function GET(request: NextRequest) {
       amount: amount != null && Number.isFinite(amount) ? amount : undefined,
       shares: shares != null && Number.isFinite(shares) ? shares : undefined,
       live: live.size ? live : null,
-      dividends: getDividends(),
     });
     if ("error" in result) return NextResponse.json(result, { status: 400 });
     return NextResponse.json(result);

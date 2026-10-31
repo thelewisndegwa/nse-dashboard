@@ -40,7 +40,6 @@ export type WhatIfStep = {
   ratio: number;
   sharesBefore: number;
   sharesAfter: number;
-  dividend?: number;
 };
 
 export type WhatIfResult = {
@@ -55,9 +54,6 @@ export type WhatIfResult = {
   sharesBought: number;
   sharesNow: number;
   cash: number;
-  dividends: number;
-  dividendCount: number;
-  dividendFrom: string | null;
   cost: number;
   nowPrice: number;
   nowAsOf: string;

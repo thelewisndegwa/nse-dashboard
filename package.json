@@ -8,8 +8,7 @@
     "start": "next start",
     "test": "vitest run",
     "data-report": "tsx scripts/data-report.ts",
-    "backfill": "node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON scripts/backfill-mystocks.mjs",
-    "dividends": "tsx scripts/backfill-dividends.ts"
+    "backfill": "node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON scripts/backfill-mystocks.mjs"
   },
   "dependencies": {
     "next": "^15.5.6",
