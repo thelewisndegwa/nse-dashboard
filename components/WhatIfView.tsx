@@ -155,7 +155,7 @@ export function WhatIfView({ stocks, historyEnd, quoteVersion }: Props) {
         </div>
         <div className="ask-grid">
           <StockPicker label="into" items={items} value={code} onChange={setCode} />
-          <div>
+          <div className="date-block">
             <label className="field">
               <span>on</span>
               <input type="date" value={date} min={stock?.first} max={stock?.last || historyEnd} onChange={(event) => setDate(event.target.value)} />

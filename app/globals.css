@@ -132,11 +132,22 @@ a { color: var(--gold); }
 }
 input[type="date"] {
   display: block;
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
   color-scheme: light;
+  /* iOS Safari date inputs ignore width and overflow the card otherwise */
+  -webkit-appearance: none;
+  appearance: none;
+}
+input[type="date"]::-webkit-date-and-time-value {
+  text-align: left;
+  min-width: 0;
 }
 input[type="date"]::-webkit-calendar-picker-indicator {
   cursor: pointer;
   opacity: 0.7;
+  margin-left: 0;
 }
 
 .movers { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 12px; }
@@ -160,7 +171,7 @@ tbody tr:hover { background: rgba(28, 22, 18, 0.035); }
 
 .layout { display: grid; grid-template-columns: 340px 1fr; gap: 14px; align-items: start; }
 .stack { display: grid; gap: 14px; }
-.field { display: grid; gap: 6px; margin-bottom: 12px; }
+.field { display: grid; gap: 6px; margin-bottom: 12px; min-width: 0; max-width: 100%; }
 .field span, .label { color: var(--muted); font-size: 13px; }
 .row2 { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
 .presets { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 12px; }
@@ -208,8 +219,10 @@ tbody tr:hover { background: rgba(28, 22, 18, 0.035); }
   box-shadow: var(--focus);
 }
 .ask-grid { display: grid; grid-template-columns: 1.5fr 1fr; gap: 16px; margin-top: 18px; align-items: start; min-width: 0; }
-.ask-grid > * { min-width: 0; }
+.ask-grid > * { min-width: 0; max-width: 100%; }
+.date-block { min-width: 0; max-width: 100%; }
 .whatif .field { margin-bottom: 0; }
+.whatif .field input[type="date"] { width: 100%; max-width: 100%; }
 .whatif .field span { text-transform: none; letter-spacing: 0; }
 .sums { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 10px; }
 .sums button {
