@@ -23,6 +23,7 @@ export function StockPicker({ label, items, value, onChange }: Props) {
   const [open, setOpen] = useState(false);
   const [active, setActive] = useState(0);
   const box = useRef<HTMLDivElement | null>(null);
+  const input = useRef<HTMLInputElement | null>(null);
 
   const selectedCode = selected?.code;
   const selectedName = selected?.name;
@@ -63,16 +64,25 @@ export function StockPicker({ label, items, value, onChange }: Props) {
     setOpen(false);
   }
 
+  function closeMenu() {
+    setOpen(false);
+    if (selected) setText(selected.name);
+    // Blur so the next tap/click fires focus again and reopens the list.
+    input.current?.blur();
+  }
+
   return (
     <div className="field combo" ref={box}>
       <span>{label}</span>
       <input
+        ref={input}
         role="combobox"
         aria-expanded={open}
         aria-autocomplete="list"
         value={text}
         placeholder="Search name or ticker"
         onFocus={() => setOpen(true)}
+        onClick={() => setOpen(true)}
         onBlur={() => {
           if (selected) setText(selected.name);
         }}
@@ -91,7 +101,7 @@ export function StockPicker({ label, items, value, onChange }: Props) {
           } else if (event.key === "Enter" && open && matches[active]) {
             event.preventDefault();
             choose(matches[active].code);
-          } else if (event.key === "Escape") setOpen(false);
+          } else if (event.key === "Escape") closeMenu();
         }}
       />
       {open && (
@@ -104,8 +114,7 @@ export function StockPicker({ label, items, value, onChange }: Props) {
               aria-label="Close stock list"
               onMouseDown={(event) => {
                 event.preventDefault();
-                setOpen(false);
-                if (selected) setText(selected.name);
+                closeMenu();
               }}
             >
               Close
