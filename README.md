@@ -15,4 +15,4 @@ Open [http://localhost:3000](http://localhost:3000).
 
 `npm run backfill` fills missing weekdays from myStocks after the last date on file. Restart is not required: the loader re-reads `nse-data/` when those files change.
 
-Not investment advice.
+Dividends are not included. Not investment advice.

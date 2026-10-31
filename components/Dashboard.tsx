@@ -58,7 +58,7 @@ export function Dashboard() {
         <WhatIfView stocks={catalog.stocks} historyEnd={catalog.historyEnd} quoteVersion={quoteVersion} />
       )}
 
-      <footer className="footer">Not investment advice.</footer>
+      <footer className="footer">Dividends are not included. Not investment advice.</footer>
     </main>
   );
 }
