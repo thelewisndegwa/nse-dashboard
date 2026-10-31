@@ -102,11 +102,11 @@ export function WhatIfView({ stocks, historyEnd, quoteVersion }: Props) {
 
   const datePresets = stock
     ? [
-        { label: "6 months", months: 6 },
-        { label: "1 year", months: 12 },
-        { label: "3 years", months: 36 },
-        { label: "5 years", months: 60 },
-        { label: "10 years", months: 120 },
+        { label: "6 months ago", months: 6 },
+        { label: "1 year ago", months: 12 },
+        { label: "3 years ago", months: 36 },
+        { label: "5 years ago", months: 60 },
+        { label: "10 years ago", months: 120 },
       ]
         .map((preset) => ({ label: preset.label, date: monthsAgoIso(preset.months) }))
         .filter((preset) => preset.date >= stock.first && preset.date <= stock.last)
