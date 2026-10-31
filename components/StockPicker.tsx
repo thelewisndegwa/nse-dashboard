@@ -81,6 +81,9 @@ export function StockPicker({ label, items, value, onChange }: Props) {
         aria-autocomplete="list"
         value={text}
         placeholder="Search name or ticker"
+        onMouseDown={() => {
+          if (document.activeElement === input.current) setOpen((was) => !was);
+        }}
         onFocus={() => setOpen(true)}
         onClick={() => setOpen(true)}
         onBlur={() => {

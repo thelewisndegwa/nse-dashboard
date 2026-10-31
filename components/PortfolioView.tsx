@@ -209,7 +209,12 @@ export function PortfolioView({ stocks, board, onWhatIf }: Props) {
           </div>
           <label className="field">
             <span>Bought on, optional</span>
-            <input type="date" value={buyDate} min="2007-01-01" max={stocks[0] ? undefined : undefined} onChange={(event) => setBuyDate(event.target.value)} />
+            <span className="date-box">
+              <span className={`date-text${buyDate ? "" : " placeholder"}`} aria-hidden="true">
+                {buyDate ? niceDate(buyDate) : "Pick a date"}
+              </span>
+              <input type="date" value={buyDate} min="2007-01-01" onChange={(event) => setBuyDate(event.target.value)} />
+            </span>
           </label>
           <div className="actions">
             <button className="btn" type="button" disabled={!buyDate || !matchStock(stocks, code) || filling} onClick={fillFromDate}>

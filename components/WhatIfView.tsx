@@ -159,9 +159,20 @@ export function WhatIfView({ stocks, historyEnd, quoteVersion }: Props) {
           <div className="date-block">
             <label className="field">
               <span>on</span>
-              <input type="date" value={date} min={stock?.first} max={stock?.last || historyEnd} onChange={(event) => setDate(event.target.value)} />
+              <span className="date-box">
+                <span className="date-text" aria-hidden="true">
+                  {date ? niceDate(date) : "Pick a date"}
+                </span>
+                <input
+                  type="date"
+                  value={date}
+                  min={stock?.first}
+                  max={stock?.last || historyEnd}
+                  onChange={(event) => setDate(event.target.value)}
+                />
+              </span>
             </label>
-            <div className="sums">
+            <div className="sums date-presets">
               {datePresets.map((preset) => (
                 <button key={preset.label} type="button" aria-pressed={date === preset.date} onClick={() => setDate(preset.date)}>
                   {preset.label}

@@ -143,11 +143,77 @@ input[type="date"] {
 input[type="date"]::-webkit-date-and-time-value {
   text-align: left;
   min-width: 0;
+  min-height: 1.2em;
+}
+input[type="date"]::-webkit-datetime-edit {
+  padding: 0;
 }
 input[type="date"]::-webkit-calendar-picker-indicator {
   cursor: pointer;
   opacity: 0.7;
-  margin-left: 0;
+  margin-left: auto;
+}
+
+.date-box {
+  position: relative;
+  display: flex;
+  align-items: center;
+  width: 100%;
+  min-width: 0;
+  max-width: 100%;
+  height: 48px;
+  min-height: 48px;
+  background: var(--input-bg);
+  border: 1.5px solid var(--input-border);
+  border-radius: 12px;
+  padding: 12px 40px 12px 14px;
+  box-shadow: inset 0 1px 2px rgba(28, 22, 18, 0.04);
+}
+.date-box:focus-within {
+  border-color: var(--gold);
+  box-shadow: var(--focus);
+}
+.date-box::after {
+  content: "";
+  position: absolute;
+  right: 16px;
+  top: 50%;
+  width: 8px;
+  height: 8px;
+  border-right: 2px solid var(--faint);
+  border-bottom: 2px solid var(--faint);
+  transform: translateY(-70%) rotate(45deg);
+  pointer-events: none;
+}
+.date-text {
+  pointer-events: none;
+  font-size: 16px;
+  line-height: 1.2;
+  color: var(--ink);
+}
+.date-text.placeholder {
+  color: var(--faint);
+}
+.date-box input[type="date"] {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  min-height: 0;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  border-radius: 12px;
+  background: transparent;
+  color: transparent;
+  opacity: 0;
+  cursor: pointer;
+  box-shadow: none;
+}
+.date-box input[type="date"]:focus {
+  outline: none;
+  border-color: transparent;
+  box-shadow: none;
 }
 
 .movers { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 12px; }
@@ -336,7 +402,7 @@ tbody tr:hover { background: rgba(28, 22, 18, 0.035); }
 
 @media (max-width: 900px) {
   .strip, .stats, .totals { grid-template-columns: 1fr 1fr; }
-  .layout, .movers { grid-template-columns: 1fr; }
+  .layout, .movers, .ask-grid { grid-template-columns: 1fr; }
   .hide-sm { display: none; }
   .total strong { font-size: 28px; }
   .filters { flex-direction: column; align-items: stretch; }
@@ -344,7 +410,6 @@ tbody tr:hover { background: rgba(28, 22, 18, 0.035); }
   .chips { overflow-x: auto; flex-wrap: nowrap; -webkit-overflow-scrolling: touch; padding-bottom: 4px; }
 }
 @media (max-width: 700px) {
-  .ask-grid { grid-template-columns: 1fr; }
   .brand h1 { font-size: 24px; }
   .money-row { min-height: 56px; padding: 8px 12px; }
   .money-row input { font-size: clamp(24px, 8vw, 34px); }
@@ -363,4 +428,5 @@ tbody tr:hover { background: rgba(28, 22, 18, 0.035); }
 }
 @media (max-width: 400px) {
   .sums button { flex: 1 1 auto; text-align: center; }
+  .date-presets button { flex: 0 1 auto; }
 }
