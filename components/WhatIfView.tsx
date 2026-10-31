@@ -13,6 +13,7 @@ const AMOUNTS = [
   { label: "100k", value: "100000" },
   { label: "500k", value: "500000" },
   { label: "1m", value: "1000000" },
+  { label: "5m", value: "5000000" },
 ];
 
 type Props = {
