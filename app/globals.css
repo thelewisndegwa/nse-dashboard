@@ -278,8 +278,33 @@ tbody tr:hover { background: rgba(28, 22, 18, 0.035); }
   max-height: min(280px, 50vh); overflow: auto; padding: 6px;
   background: var(--raise); border: 1.5px solid var(--input-border); border-radius: 14px; box-shadow: var(--shadow);
 }
-.menu button { display: block; width: 100%; text-align: left; border: 0; background: transparent; border-radius: 10px; padding: 10px 10px; min-height: 44px; white-space: normal; overflow-wrap: anywhere; }
-.menu button[aria-selected="true"], .menu button:hover { background: var(--gold-soft); }
+.menu-bar {
+  position: sticky; top: 0; z-index: 1;
+  display: flex; align-items: center; justify-content: space-between; gap: 10px;
+  margin: -6px -6px 4px; padding: 8px 8px 8px 12px;
+  background: var(--raise); border-bottom: 1px solid var(--line);
+}
+.menu-bar span { color: var(--faint); font-size: 12px; letter-spacing: 0.04em; }
+.menu-close {
+  flex: 0 0 auto;
+  width: auto;
+  min-height: 36px;
+  padding: 6px 12px;
+  border-radius: 999px;
+  border: 1.5px solid var(--input-border);
+  background: var(--raise-2);
+  color: var(--ink);
+  font-size: 13px;
+  font-weight: 600;
+  text-align: center;
+}
+.menu-close:hover {
+  background: var(--gold-soft);
+  border-color: rgba(176, 122, 24, 0.45);
+  color: var(--gold);
+}
+.menu > button { display: block; width: 100%; text-align: left; border: 0; background: transparent; border-radius: 10px; padding: 10px 10px; min-height: 44px; white-space: normal; overflow-wrap: anywhere; }
+.menu > button[aria-selected="true"], .menu > button:hover { background: var(--gold-soft); }
 .menu small { color: var(--faint); }
 
 .chart-wrap { position: relative; margin-top: 8px; }

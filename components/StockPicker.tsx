@@ -96,6 +96,21 @@ export function StockPicker({ label, items, value, onChange }: Props) {
       />
       {open && (
         <div className="menu" role="listbox">
+          <div className="menu-bar">
+            <span>Pick a stock</span>
+            <button
+              type="button"
+              className="menu-close"
+              aria-label="Close stock list"
+              onMouseDown={(event) => {
+                event.preventDefault();
+                setOpen(false);
+                if (selected) setText(selected.name);
+              }}
+            >
+              Close
+            </button>
+          </div>
           {matches.length === 0 && <button type="button">No match</button>}
           {matches.map((item, index) => (
             <button
