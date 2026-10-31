@@ -46,14 +46,6 @@ export type WhatIfResult = {
   steps: WhatIfStep[];
   points: { d: string; v: number }[];
   liveAttached: boolean;
-  benchmark: {
-    code: string;
-    name: string;
-    thenLevel: number;
-    nowLevel: number;
-    value: number;
-    returnPct: number;
-  } | null;
   warnings: string[];
   historyEnd: string;
 };
@@ -234,33 +226,7 @@ export function whatIf(input: {
     steps,
     points: downsample(points),
     liveAttached,
-    benchmark: benchmark(input.market, input.live, tradeYmd, cost),
     warnings,
     historyEnd: ymdToIso(last),
-  };
-}
-
-/** The same money in the NSE All Share Index, or the NSE 20 before the All Share Index began in Feb 2008. */
-function benchmark(
-  market: Market,
-  live: Map<string, LivePrice> | null | undefined,
-  tradeYmd: number,
-  cost: number
-): WhatIfResult["benchmark"] {
-  const nasi = market.byCode.get("^NASI");
-  const index = nasi && tradeYmd >= nasi.dates[0] ? nasi : market.byCode.get("^N20I");
-  if (!index) return null;
-  const idx = sessionOnOrAfter(index, tradeYmd);
-  if (idx < 0 || ymdToTime(index.dates[idx]) - ymdToTime(tradeYmd) > 10 * 86_400_000) return null;
-  const thenLevel = index.closes[idx];
-  const nowLevel = liveFor(index, live)?.price ?? index.closes[index.closes.length - 1];
-  const value = cost * (nowLevel / thenLevel);
-  return {
-    code: index.code,
-    name: index.name,
-    thenLevel,
-    nowLevel,
-    value,
-    returnPct: (value / cost - 1) * 100,
   };
 }

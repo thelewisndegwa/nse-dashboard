@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
-import { comma, kesExact, niceDate, pct, tone } from "@/lib/format";
+import { comma, niceDate, pct, tone } from "@/lib/format";
 import { matchStock } from "@/lib/stocks";
 import type { StockInfo, WhatIfResult } from "@/lib/types";
 import { PriceChart } from "./PriceChart";
@@ -196,11 +196,6 @@ export function WhatIfView({ stocks, historyEnd, quoteVersion }: Props) {
               </span>
             </p>
             <PriceChart points={chartPoints} liveAttached={result.liveAttached} />
-            {result.benchmark && (
-              <p className="vs">
-                Same money in the {result.benchmark.name}: {kesExact(result.benchmark.value)} ({pct(result.benchmark.returnPct)})
-              </p>
-            )}
             {actions ? <p className="quiet">Adjusted for {actions}.</p> : null}
             {result.warnings.map((warning) => (
               <p className="banner" key={warning}>

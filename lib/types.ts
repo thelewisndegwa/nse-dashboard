@@ -66,14 +66,6 @@ export type WhatIfResult = {
   steps: WhatIfStep[];
   points: { d: string; v: number }[];
   liveAttached: boolean;
-  benchmark: {
-    code: string;
-    name: string;
-    thenLevel: number;
-    nowLevel: number;
-    value: number;
-    returnPct: number;
-  } | null;
   warnings: string[];
   historyEnd: string;
 };
